@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import filedialog
 
 import pandas as pd
 
@@ -18,6 +18,10 @@ class InsertNewData(tk.Frame):
         search_button = tk.Button(self, text="Search", command=self.search_variety)
         search_button.pack()
 
+        # Label to display the result
+        self.result_label = tk.Label(self, text="")
+        self.result_label.pack()
+
         # Button to upload an external file
         upload_button = tk.Button(self, text="Upload File", command=self.load_external_file)
         upload_button.pack()
@@ -35,13 +39,14 @@ class InsertNewData(tk.Frame):
             result = df[df['Variety'] == user_input]
 
             if not result.empty:
-                # Display the result (you can update this part as needed)
-                print(result)
+                # Display the result
+                self.result_label.config(text=result.to_string(index=False))
             else:
-                print("Variety not found.")
+                # Display message when variety not found
+                self.result_label.config(text="Variety not found in database.")
 
         except FileNotFoundError:
-            print("123123")
+            self.result_label.config(text="File not found.Make sure the database exists.")
 
     def load_external_file(self):
         # Prompt the user to select a CSV file
