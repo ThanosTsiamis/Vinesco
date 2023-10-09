@@ -1,3 +1,4 @@
+import os
 import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox
@@ -30,13 +31,19 @@ class InsertNewData(tk.Frame):
         welcome_button = tk.Button(self, text="Go to Home Page", command=lambda: controller.show_frame("WelcomePage"))
         welcome_button.place(x=0, y=0)
 
+        # Get the directory where the script is running, considering pyinstaller
+        self.script_directory = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+
     def search_variety(self):
         # Get the user input from the entry field
         user_input = self.variety_entry.get()
 
+        # Construct the full path to the CSV file
+        csv_file_path = os.path.join(self.script_directory, "database", "Varieties_Ground_Truth.csv")
+
         # Load the CSV file and search for the variety
         try:
-            df = pd.read_csv("database/Varieties_Ground_Truth.csv")
+            df = pd.read_csv(csv_file_path)
             result = df[df['Variety'] == user_input]
 
             if not result.empty:
@@ -49,10 +56,10 @@ class InsertNewData(tk.Frame):
                     # Add the new variety to the database
                     new_row = pd.DataFrame({'Variety': [user_input]})
                     df = pd.concat([df, new_row], ignore_index=True)
-                    df.to_csv("database/Varieties_Ground_Truth.csv", index=False)
+                    df.to_csv(csv_file_path, index=False)
                     self.result_label.config(text="Variety added to database.")
         except FileNotFoundError:
-            self.result_label.config(text=f"!!!!!File not found.Make sure the database exists.")
+            self.result_label.config(text="File not found. Make sure the database exists.")
 
     def load_external_file(self):
         # Prompt the user to select a CSV file
@@ -75,16 +82,14 @@ class InsertNewData(tk.Frame):
                     raise FileNotFoundError
 
                 # Load the selected CSV file
-                df = pd.read_csv(file_path)
-
-                # Update the existing database with the new data
+                csv_file_path = os.path.join(self.script_directory, "database", "Varieties_Ground_Truth.csv")
                 try:
-                    db = pd.read_csv("../database/Varieties_Ground_Truth.csv")
+                    db = pd.read_csv(csv_file_path)
                     merged_db = pd.concat([db, df], ignore_index=True)
-                    merged_db.to_csv("../database/Varieties_Ground_Truth.csv", index=False)
+                    merged_db.to_csv(csv_file_path, index=False)
                 except FileNotFoundError:
                     # If the database doesn't exist yet, create a new one
-                    df.to_csv("../database/Varieties_Ground_Truth.csv", index=False)
+                    df.to_csv(csv_file_path, index=False)
 
                 print("File uploaded and merged with the database.")
 
