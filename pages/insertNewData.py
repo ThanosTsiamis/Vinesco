@@ -1,5 +1,6 @@
+import sys
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
 import pandas as pd
 
@@ -42,11 +43,16 @@ class InsertNewData(tk.Frame):
                 # Display the result
                 self.result_label.config(text=result.to_string(index=False))
             else:
-                # Display message when variety not found
-                self.result_label.config(text="Variety not found in database.")
-
+                response = messagebox.askyesno("Variety Not Found",
+                                               "Variety not found in database. Do you want to add it?")
+                if response:
+                    # Add the new variety to the database
+                    new_row = pd.DataFrame({'Variety': [user_input]})
+                    df = pd.concat([df, new_row], ignore_index=True)
+                    df.to_csv("database/Varieties_Ground_Truth.csv", index=False)
+                    self.result_label.config(text="Variety added to database.")
         except FileNotFoundError:
-            self.result_label.config(text="File not found.Make sure the database exists.")
+            self.result_label.config(text=f"!!!!!File not found.Make sure the database exists.")
 
     def load_external_file(self):
         # Prompt the user to select a CSV file
