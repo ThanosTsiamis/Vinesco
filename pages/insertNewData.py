@@ -127,18 +127,19 @@ class InsertNewData(tk.Frame):
         """Search for the column in the dataset. If the column is found, the user should be able to edit the value. If
         not, a new column should be created."""
         try:
-            df = pd.read_csv("database/Varieties_Ground_Truth.csv")
+            csv_file_path = os.path.join(self.script_directory, "database", "Varieties_Ground_Truth.csv")
+            df = pd.read_csv(csv_file_path)
             result = df[df['Variety'] == user_input]
 
             if not result.empty:
                 # If the column exists, edit the value
                 df.loc[df['Variety'] == user_input, column] = value
-                df.to_csv("database/Varieties_Ground_Truth.csv", index=False)
+                df.to_csv(csv_file_path, index=False)
                 self.result_label.config(text="Value updated.")
             else:
                 # If the column doesn't exist, create a new one
                 df[column] = value
-                df.to_csv("database/Varieties_Ground_Truth.csv", index=False)
+                df.to_csv(csv_file_path, index=False)
                 self.result_label.config(text="Column created.")
         except FileNotFoundError:
             self.result_label.config(text=f"File not found.Make sure the database exists.")
