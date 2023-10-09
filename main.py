@@ -1,8 +1,8 @@
 import tkinter as tk
 
-from pages.welcomePage import WelcomePage
-from pages.settingsPage import SettingsPage
 from pages.insertNewData import InsertNewData
+from pages.settingsPage import SettingsPage
+from pages.welcomePage import WelcomePage
 
 
 class MainApp(tk.Tk):
@@ -15,7 +15,7 @@ class MainApp(tk.Tk):
 
         self.frames = {}
 
-        for PageClass in (WelcomePage, SettingsPage, InsertNewData ):
+        for PageClass in (WelcomePage, SettingsPage, InsertNewData):
             page_name = PageClass.__name__
             frame = PageClass(container, self)
             self.frames[page_name] = frame
@@ -30,4 +30,6 @@ class MainApp(tk.Tk):
 
 if __name__ == "__main__":
     app = MainApp()
+    # TODO: Add the ico image
+    app.title("Vinesco")
     app.mainloop()
