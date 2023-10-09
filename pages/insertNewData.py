@@ -1,4 +1,3 @@
-import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
@@ -40,8 +39,9 @@ class InsertNewData(tk.Frame):
             result = df[df['Variety'] == user_input]
 
             if not result.empty:
-                # Display the result
                 self.result_label.config(text=result.to_string(index=False))
+                edit_button = tk.Button(self, text="Edit", command=lambda: self.edit_result(user_input))
+                edit_button.pack()
             else:
                 response = messagebox.askyesno("Variety Not Found",
                                                "Variety not found in database. Do you want to add it?")
@@ -52,7 +52,7 @@ class InsertNewData(tk.Frame):
                     df.to_csv("database/Varieties_Ground_Truth.csv", index=False)
                     self.result_label.config(text="Variety added to database.")
         except FileNotFoundError:
-            self.result_label.config(text=f"!!!!!File not found.Make sure the database exists.")
+            self.result_label.config(text=f"File not found.Make sure the database exists.")
 
     def load_external_file(self):
         # Prompt the user to select a CSV file
@@ -90,6 +90,52 @@ class InsertNewData(tk.Frame):
 
             except FileNotFoundError:
                 print("Selected file not found or is not in appropriate format.")
+
+    def edit_result(self, user_input):
+        """Open a new window to edit the result. A text input should be displayed that searches for the column in the
+        dataset. If the column is found, the user should be able to edit the value. If not, a new column should be
+        created."""
+        # Create a new window
+        window = tk.Toplevel(self)
+        window.title("Edit Result")
+
+        # Create a label to display the result
+        result_label = tk.Label(window, text=f"Variety: {user_input}")
+        result_label.pack()
+
+        # Create a text input to search for the column
+        column_entry = tk.Entry(window)
+        column_entry.pack()
+
+        # Create a text input to edit the value
+        value_entry = tk.Entry(window)
+        value_entry.pack()
+
+        # Create a button to perform the search
+        search_button = tk.Button(window, text="Enter DNA marker/value", command=lambda: self.edit_result_search(column_entry.get(),
+                                                                                                 value_entry.get(),
+                                                                                                 user_input))
+        search_button.pack()
+
+    def edit_result_search(self, column, value, user_input):
+        """Search for the column in the dataset. If the column is found, the user should be able to edit the value. If
+        not, a new column should be created."""
+        try:
+            df = pd.read_csv("database/Varieties_Ground_Truth.csv")
+            result = df[df['Variety'] == user_input]
+
+            if not result.empty:
+                # If the column exists, edit the value
+                df.loc[df['Variety'] == user_input, column] = value
+                df.to_csv("database/Varieties_Ground_Truth.csv", index=False)
+                self.result_label.config(text="Value updated.")
+            else:
+                # If the column doesn't exist, create a new one
+                df[column] = value
+                df.to_csv("database/Varieties_Ground_Truth.csv", index=False)
+                self.result_label.config(text="Column created.")
+        except FileNotFoundError:
+            self.result_label.config(text=f"File not found.Make sure the database exists.")
 
 
 if __name__ == "__main__":
