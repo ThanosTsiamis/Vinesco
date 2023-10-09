@@ -39,7 +39,8 @@ class InsertNewData(tk.Frame):
         user_input = self.variety_entry.get()
 
         # Construct the full path to the CSV file
-        csv_file_path = os.path.join(self.script_directory, "database", "Varieties_Ground_Truth.csv")
+        csv_file_path = os.path.join(os.path.join(os.path.expanduser("~"), "Vinesco"), "database",
+                                     "Varieties_Ground_Truth.csv")
 
         # Load the CSV file and search for the variety
         try:
@@ -118,16 +119,18 @@ class InsertNewData(tk.Frame):
         value_entry.pack()
 
         # Create a button to perform the search
-        search_button = tk.Button(window, text="Enter DNA marker/value", command=lambda: self.edit_result_search(column_entry.get(),
-                                                                                                 value_entry.get(),
-                                                                                                 user_input))
+        search_button = tk.Button(window, text="Enter DNA marker/value",
+                                  command=lambda: self.edit_result_search(column_entry.get(),
+                                                                          value_entry.get(),
+                                                                          user_input))
         search_button.pack()
 
     def edit_result_search(self, column, value, user_input):
         """Search for the column in the dataset. If the column is found, the user should be able to edit the value. If
         not, a new column should be created."""
         try:
-            csv_file_path = os.path.join(self.script_directory, "database", "Varieties_Ground_Truth.csv")
+            csv_file_path = os.path.join(os.path.join(os.path.expanduser("~"), "Vinesco"), "database",
+                                         "Varieties_Ground_Truth.csv")
             df = pd.read_csv(csv_file_path)
             result = df[df['Variety'] == user_input]
 
