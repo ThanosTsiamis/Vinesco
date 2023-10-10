@@ -38,6 +38,11 @@ class InsertNewData(tk.Frame):
         # Get the user input from the entry field
         user_input = self.variety_entry.get()
 
+        # Remove any existing edit button
+        for widget in self.winfo_children():
+            if isinstance(widget, tk.Button) and widget.cget("text") == "Edit":
+                widget.destroy()
+
         # Construct the full path to the CSV file
         csv_file_path = os.path.join(os.path.join(os.path.expanduser("~"), "Vinesco"), "database",
                                      "Varieties_Ground_Truth.csv")
