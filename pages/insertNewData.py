@@ -70,7 +70,7 @@ class InsertNewData(tk.Frame):
 
     def load_external_file(self):
         # Prompt the user to select a CSV file
-        file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
+        file_path = filedialog.askopenfilename()
 
         if file_path:
             try:
@@ -98,10 +98,10 @@ class InsertNewData(tk.Frame):
                     # If the database doesn't exist yet, create a new one
                     df.to_csv(csv_file_path, index=False)
 
-                print("File uploaded and merged with the database.")
+                self.result_label.config(text="File uploaded and merged with the database.")
 
             except FileNotFoundError:
-                print("Selected file not found or is not in appropriate format.")
+                self.result_label.config(text="Selected file not found or is not in appropriate format.")
 
     def edit_result(self, user_input):
         """Open a new window to edit the result. A text input should be displayed that searches for the column in the
