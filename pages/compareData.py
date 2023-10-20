@@ -54,21 +54,34 @@ class CompareData(tk.Frame):
                     raise FileNotFoundError
 
                 self.message.config(text="Dataset loaded successfully")
+            #     Display the dataset in a table
+                self.create_tree()
             except FileNotFoundError:
                 self.message.config(text="Selected file not found or is not in appropriate format.")
 
-    def create_tree(self):
+    def create_tree(self, *columns):
         if self.tree:
             self.tree.destroy()
 
         self.tree = ttk.Treeview(self)
-        self.tree["columns"] = ("one", "two")
-        self.tree.column("one", width=100)
-        self.tree.column("two", width=100)
-        self.tree.heading("one", text="Sample")
-        self.tree.heading("two", text="Score")
+
+        # If columns are provided, use them; otherwise, use all columns from the DataFrame
+        if columns:
+            self.tree["columns"] = columns
+            for col in columns:
+                self.tree.column(col, width=100)
+                self.tree.heading(col, text=col)
+        else:
+            self.tree["columns"] = list(self.df.columns)
+            for col in self.df.columns:
+                self.tree.column(col, width=100)
+                self.tree.heading(col, text=col)
+
         for index, row in self.df.iterrows():
-            self.tree.insert("", "end", values=(row['Sample'], row['Scores']))
+            values = [row[col] for col in self.tree["columns"]]
+            self.tree.insert("", "end", values=values)
+
+        # Hide the indices
         self.tree["show"] = "headings"
         self.tree.pack()
     def verify_variety(self):
@@ -132,7 +145,7 @@ class CompareData(tk.Frame):
                 self.df['Scores'] = new_df.sum(axis=1) / len(new_df.columns)
                 # Display on the front end the first column of the self.df DataFrame and the scores
                 # The dataframe should be displayed in a table. The indices should be hidden.
-                self.create_tree()
+                self.create_tree("Sample", "Scores")
 
 
                 print("123")
