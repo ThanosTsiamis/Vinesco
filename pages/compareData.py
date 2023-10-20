@@ -28,7 +28,7 @@ class CompareData(tk.Frame):
         self.message.pack()
 
         # Numeric entry field for the allowed difference
-        self.allowed_difference = tk.Entry(self)
+        self.allowed_difference = tk.Entry(self, textvariable=tk.IntVar())
         self.allowed_difference.pack()
 
     def load_external_file(self):
@@ -51,13 +51,6 @@ class CompareData(tk.Frame):
                     raise FileNotFoundError
 
                 self.message.config(text="Dataset loaded successfully")
-                csv_file_path = os.path.join(os.path.join(os.path.expanduser("~"), "Vinesco"), "database",
-                                             "Varieties_Ground_Truth.csv")
-                try:
-                    db = pd.read_csv(csv_file_path)
-                    dataframe = pd.DataFrame()
-                except FileNotFoundError:
-                    self.message.config(text="Database not found. Please upload a dataset first.")
             except FileNotFoundError:
                 self.message.config(text="Selected file not found or is not in appropriate format.")
 
@@ -75,6 +68,30 @@ class CompareData(tk.Frame):
             if not result.empty:
                 # Check if a match is found
                 print("Variety found:", result)
+                # Correct the variety numbers based on the ground truth file
+                csv_file_path = os.path.join(os.path.join(os.path.expanduser("~"), "Vinesco"), "database",
+                                             "Varieties_Ground_Truth.csv")
+                try:
+                    varieties_ground_truth_df = pd.read_csv(csv_file_path)
+                except FileNotFoundError:
+                    self.message.config(text="No ground truth numbers file found. No correction will be applied.")
+                    varieties_ground_truth_df = None
+                if varieties_ground_truth_df is not None:
+                    difs = {}
+                    for column in result:
+                        if column != 'Sample' and column in varieties_ground_truth_df.columns:
+                            if user_input in varieties_ground_truth_df['Variety'].values:
+                                difs[column] = varieties_ground_truth_df.loc[
+                                                   varieties_ground_truth_df['Variety'] == user_input, column].iloc[0] - \
+                                               result[column].iloc[0]
+
+                # Based on the keys of the difs dictionary, update the values in the self.df DataFrame by adding or
+                # subtracting the difference
+                for key in difs:
+                    self.df[key] = self.df[key] + difs[key]
+                print(self.df)
+
+                # Create a dictionary to store the close matches
                 close_match = {}
                 # If the user has entered a value for the allowed difference, use it. Otherwise, use 2
                 if self.allowed_difference.get():
