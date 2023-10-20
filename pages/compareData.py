@@ -1,6 +1,6 @@
 import os
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, ttk
 
 import pandas as pd
 
@@ -8,6 +8,9 @@ import pandas as pd
 class CompareData(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        # Table to display the results
+        self.tree = None
+
         label = tk.Label(self, text="Compare against baseline data")
         label.pack(pady=10, padx=10)
 
@@ -54,6 +57,20 @@ class CompareData(tk.Frame):
             except FileNotFoundError:
                 self.message.config(text="Selected file not found or is not in appropriate format.")
 
+    def create_tree(self):
+        if self.tree:
+            self.tree.destroy()
+
+        self.tree = ttk.Treeview(self)
+        self.tree["columns"] = ("one", "two")
+        self.tree.column("one", width=100)
+        self.tree.column("two", width=100)
+        self.tree.heading("one", text="Sample")
+        self.tree.heading("two", text="Score")
+        for index, row in self.df.iterrows():
+            self.tree.insert("", "end", values=(row['Sample'], row['Scores']))
+        self.tree["show"] = "headings"
+        self.tree.pack()
     def verify_variety(self):
         # Get the user input from the Entry field
         user_input = self.variety_entry.get()
@@ -112,8 +129,12 @@ class CompareData(tk.Frame):
                     new_df[column] = new_df.index.isin(close_match[column])
                 # In this new df we sum the number of True values for each row.
                 # If the sum is almost equal to the number of columns, then all the values are close enough.
-                new_df['sum'] = new_df.sum(axis=1)
-                print(new_df)
+                self.df['Scores'] = new_df.sum(axis=1) / len(new_df.columns)
+                # Display on the front end the first column of the self.df DataFrame and the scores
+                # The dataframe should be displayed in a table. The indices should be hidden.
+                self.create_tree()
+
+
                 print("123")
             else:
                 self.message.config(text="Variety not found in the dataset. Make sure the spelling is correct.")

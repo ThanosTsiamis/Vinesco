@@ -1,5 +1,6 @@
 import tkinter as tk
 
+from pages.compareData import CompareData
 from pages.insertNewData import InsertNewData
 from pages.settingsPage import SettingsPage
 from pages.welcomePage import WelcomePage
@@ -15,7 +16,7 @@ class MainApp(tk.Tk):
 
         self.frames = {}
 
-        for PageClass in (WelcomePage, SettingsPage, InsertNewData):
+        for PageClass in (WelcomePage, SettingsPage, InsertNewData, CompareData):
             page_name = PageClass.__name__
             frame = PageClass(container, self)
             self.frames[page_name] = frame
