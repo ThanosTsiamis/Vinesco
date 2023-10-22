@@ -28,7 +28,7 @@ class InsertNewData(tk.Frame):
         upload_button = tk.Button(self, text="Upload File", command=self.load_external_file)
         upload_button.pack()
 
-        welcome_button = tk.Button(self, text="Go to Home Page", command=lambda: controller.show_frame("WelcomePage"))
+        welcome_button = tk.Button(self, text="🏠 Go to Home Page", command=lambda: controller.show_frame("WelcomePage"))
         welcome_button.place(x=0, y=0)
 
         # Get the directory where the script is running, considering pyinstaller

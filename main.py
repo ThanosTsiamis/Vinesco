@@ -31,7 +31,9 @@ class MainApp(tk.Tk):
 
 if __name__ == "__main__":
     app = MainApp()
-    # TODO: Add the ico image
+    app.iconbitmap("resources/Vinesco.ico")
     app.title("Vinesco")
-    app.geometry("800x400")  # Set the window size
+    app.configure(bg="white")
+    # open in full screen
+    app.state("zoomed")
     app.mainloop()
