@@ -18,21 +18,29 @@ class CompareData(tk.Frame):
         upload_button = tk.Button(self, text="Upload File", command=self.load_external_file)
         upload_button.pack()
 
+        # Text which explains that you need to enter the variety name
+        self.variety_text = tk.Label(self, text="Enter the variety name:")
+        self.variety_text.pack()
+
         # Field to enter the variety name
         self.variety_entry = tk.Entry(self)
         self.variety_entry.pack()
-
-        # Button to perform the Comparison
-        search_button = tk.Button(self, text="Compare", command=self.verify_variety)
-        search_button.pack()
 
         # Label to display various messages
         self.message = tk.Label(self, text="")
         self.message.pack()
 
+        # Text which explains the allowed difference
+        self.allowed_difference_text = tk.Label(self, text="Allowed difference:")
+        self.allowed_difference_text.pack()
+
         # Numeric entry field for the allowed difference
-        self.allowed_difference = tk.Entry(self, textvariable=tk.IntVar())
+        self.allowed_difference = tk.Entry(self, textvariable=tk.IntVar(), width=3)  # Adjust the width as needed
         self.allowed_difference.pack()
+
+        # Button to perform the Comparison
+        search_button = tk.Button(self, text="Compare", command=self.verify_variety)
+        search_button.pack()
 
     def load_external_file(self):
         file_path = filedialog.askopenfilename()
@@ -54,7 +62,7 @@ class CompareData(tk.Frame):
                     raise FileNotFoundError
 
                 self.message.config(text="Dataset loaded successfully")
-            #     Display the dataset in a table
+                #     Display the dataset in a table
                 self.create_tree()
             except FileNotFoundError:
                 self.message.config(text="Selected file not found or is not in appropriate format.")
@@ -84,6 +92,7 @@ class CompareData(tk.Frame):
         # Hide the indices
         self.tree["show"] = "headings"
         self.tree.pack()
+
     def verify_variety(self):
         # Get the user input from the Entry field
         user_input = self.variety_entry.get()
@@ -146,7 +155,6 @@ class CompareData(tk.Frame):
                 # Display on the front end the first column of the self.df DataFrame and the scores
                 # The dataframe should be displayed in a table. The indices should be hidden.
                 self.create_tree("Sample", "Scores")
-
 
                 print("123")
             else:

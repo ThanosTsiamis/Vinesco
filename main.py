@@ -31,7 +31,7 @@ class MainApp(tk.Tk):
 
 if __name__ == "__main__":
     app = MainApp()
-    app.iconbitmap("resources/Vinesco.ico")
+    # app.iconbitmap("resources/Vinesco.ico")
     app.title("Vinesco")
     app.configure(bg="white")
     # open in full screen

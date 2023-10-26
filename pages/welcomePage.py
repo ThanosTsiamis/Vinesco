@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 import webbrowser
 from tkinter import ttk
@@ -6,6 +7,7 @@ from tkinter import ttk
 
 def open_github_link(event):
     webbrowser.open("https://github.com/ThanosTsiamis/Vinesco", new=2)
+
 
 class WelcomePage(tk.Frame):
     def __init__(self, parent, controller):
@@ -30,7 +32,17 @@ class WelcomePage(tk.Frame):
         subtext = tk.Label(self, text=" Unveiling Grape Varieties Through DNA Analysis", font=("Helvetica", 12),
                            fg="gray")
         subtext.place(x=50, y=50)
-        image = tk.PhotoImage(file=os.path.join("resources", "Vinesco.png"))
+        if getattr(sys, 'frozen', False):
+            # Running as a PyInstaller executable
+            base_path = sys._MEIPASS
+        else:
+            # Running as a regular Python script
+            script_directory = os.path.abspath(os.path.dirname(__file__))
+            base_path = os.path.dirname(script_directory)
+
+        image_path = os.path.join(base_path, "resources", "Vinesco.png")
+
+        image = tk.PhotoImage(file=image_path)
         image = image.subsample(2, 2)
         image_label = tk.Label(self, image=image)
         image_label.image = image
