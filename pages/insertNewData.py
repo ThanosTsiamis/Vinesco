@@ -9,7 +9,7 @@ import pandas as pd
 class InsertNewData(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Insert a base pair number for the grape variety")
+        label = tk.Label(self, text="Search a Grape Variety")
         label.pack(pady=10, padx=10)
 
         # Entry field for user input

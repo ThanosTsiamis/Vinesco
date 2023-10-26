@@ -1,7 +1,11 @@
 import os
 import tkinter as tk
+import webbrowser
 from tkinter import ttk
 
+
+def open_github_link(event):
+    webbrowser.open("https://github.com/ThanosTsiamis/Vinesco", new=2)
 
 class WelcomePage(tk.Frame):
     def __init__(self, parent, controller):
@@ -30,14 +34,14 @@ class WelcomePage(tk.Frame):
         image = image.subsample(2, 2)
         image_label = tk.Label(self, image=image)
         image_label.image = image
-        image_label.pack(pady=10, padx=10)
+        image_label.place(x=10, y=90)
 
         button_style = ttk.Style()
         button_style.configure("TButton", font=("Helvetica", 12))
 
         settingsButton = ttk.Button(self, text="🔧 Go to Settings Page",
                                     command=lambda: controller.show_frame("SettingsPage"), style="TButton")
-        settingsButton.pack(ipady=10, ipadx=10)
+        settingsButton.place(relx=1.0, rely=0.0, anchor="ne")
 
         insertEditGroundTruth = ttk.Button(self, text="Ιnsert/Edit Variety Numbers",
                                            command=lambda: controller.show_frame("InsertNewData"))
@@ -47,13 +51,23 @@ class WelcomePage(tk.Frame):
                                    command=lambda: controller.show_frame("CompareData"))
         compareButton.pack()
 
-        # Footer Frame
+        # Create the footer frame with a grid layout and multiple rows
         footer_frame = tk.Frame(self)
         footer_frame.pack(side="bottom", fill="x")
 
-        # Add labels or buttons in the footer as needed, for example:
-        github_link = tk.Label(footer_frame, text="GitHub: https://github.com/your_username/Vinesco")
-        github_link.pack(side="left", padx=10)
+        # Left column with "About" and project description
+        about_label = tk.Label(footer_frame, text="About")
+        about_label.grid(row=0, column=0, padx=(10, 5), sticky="w")
 
-        about_link = tk.Label(footer_frame, text="About Us")
-        about_link.pack(side="right", padx=10)
+        about_text = tk.Label(footer_frame,
+                              text="Vinesco is a software application that aims to automate the detection of grape "
+                                   "varieties through DNA analysis. ")
+        about_text.grid(row=0, column=1, columnspan=3, padx=(5, 10), sticky="w")
+
+        # Right column with "Links" and the GitHub link
+        links_label = tk.Label(footer_frame, text="Code Repository:")
+        links_label.grid(row=1, column=0, padx=(10, 5), sticky="w")
+
+        github_link = tk.Label(footer_frame, text="GitHub: https://github.com/ThanosTsiamis/Vinesco", cursor="hand2")
+        github_link.grid(row=1, column=1, columnspan=3, padx=(5, 10), sticky="w")
+        github_link.bind("<Button-1>", open_github_link)  # Bind the link to the label

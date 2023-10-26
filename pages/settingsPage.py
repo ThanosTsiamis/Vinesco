@@ -33,4 +33,4 @@ class SettingsPage(tk.Frame):
         deleteButton.pack()
 
         welcomeButton = tk.Button(self, text="🏠 Go to Home Page", command=lambda: controller.show_frame("WelcomePage"))
-        welcomeButton.pack()
+        welcomeButton.place(x=0, y=0)
