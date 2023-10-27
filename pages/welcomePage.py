@@ -20,14 +20,28 @@ class WelcomePage(tk.Frame):
         if not os.path.exists(self.app_directory):
             os.makedirs(self.app_directory)
 
-        # Copy the database directory to the app directory
+        # Determine the base path for resources
+        if getattr(sys, 'frozen', False):
+            # Running as a PyInstaller executable
+            base_path = sys._MEIPASS
+        else:
+            # Running as a regular Python script
+            script_directory = os.path.abspath(os.path.dirname(__file__))
+            base_path = os.path.dirname(script_directory)
+
+        # Absolute path to the source file (Varieties_Ground_Truth.csv)
+        source_file = os.path.join(base_path, "database", "Varieties_Ground_Truth.csv")
+
+        # Destination directory
         database_directory = os.path.join(self.app_directory, "database")
         if not os.path.exists(database_directory):
             os.makedirs(database_directory)
         database_file = os.path.join(database_directory, "Varieties_Ground_Truth.csv")
+
+        # Copy the source file to the destination
         if not os.path.exists(database_file):
             import shutil
-            shutil.copy(os.path.join("database", "Varieties_Ground_Truth.csv"), database_file)
+            shutil.copy(source_file, database_file)
 
         subtext = tk.Label(self, text=" Unveiling Grape Varieties Through DNA Analysis", font=("Helvetica", 12),
                            fg="gray")
