@@ -19,7 +19,7 @@ class CompareData(tk.Frame):
         upload_button.pack()
 
         # Text which explains that you need to enter the variety name
-        self.variety_text = tk.Label(self, text="Enter the variety name:")
+        self.variety_text = tk.Label(self, text="Check the samples against which variety?")
         self.variety_text.pack()
 
         # Field to enter the variety name
@@ -155,8 +155,6 @@ class CompareData(tk.Frame):
                 # Display on the front end the first column of the self.df DataFrame and the scores
                 # The dataframe should be displayed in a table. The indices should be hidden.
                 self.create_tree("Sample", "Scores")
-
-                print("123")
             else:
                 self.message.config(text="Variety not found in the dataset. Make sure the spelling is correct.")
         else:

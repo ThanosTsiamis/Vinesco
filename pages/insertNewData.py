@@ -24,9 +24,17 @@ class InsertNewData(tk.Frame):
         self.result_label = tk.Label(self, text="")
         self.result_label.pack()
 
+        # Create a frame for the upload section
+        upload_frame = tk.Frame(self)
+        upload_frame.pack()
+
+        # Label to explain what the "Upload File" button does
+        upload_text = tk.Label(upload_frame, text="Upload a file to bulk add varieties to the database:")
+        upload_text.pack(side=tk.LEFT)  # Place it on the left
+
         # Button to upload an external file
-        upload_button = tk.Button(self, text="Upload File", command=self.load_external_file)
-        upload_button.pack()
+        upload_button = tk.Button(upload_frame, text="Upload File", command=self.load_external_file)
+        upload_button.pack(side=tk.LEFT)  # Place it on the left
 
         welcome_button = tk.Button(self, text="🏠 Go to Home Page", command=lambda: controller.show_frame("WelcomePage"))
         welcome_button.place(x=0, y=0)
@@ -104,29 +112,26 @@ class InsertNewData(tk.Frame):
                 self.result_label.config(text="Selected file not found or is not in appropriate format.")
 
     def edit_result(self, user_input):
-        """Open a new window to edit the result. A text input should be displayed that searches for the column in the
-        dataset. If the column is found, the user should be able to edit the value. If not, a new column should be
-        created."""
-        # Create a new window
-        window = tk.Toplevel(self)
-        window.title("Edit Result")
+        # Remove any existing edit fields
+        for widget in self.winfo_children():
+            if isinstance(widget, tk.Entry) and widget.winfo_parent() == self.winfo_id():
+                widget.destroy()
 
         # Create a label to display the result
-        result_label = tk.Label(window, text=f"Variety: {user_input}")
+        result_label = tk.Label(self, text=f"Variety: {user_input}")
         result_label.pack()
 
         # Create a text input to search for the column
-        column_entry = tk.Entry(window)
+        column_entry = tk.Entry(self)
         column_entry.pack()
 
         # Create a text input to edit the value
-        value_entry = tk.Entry(window)
+        value_entry = tk.Entry(self)
         value_entry.pack()
 
         # Create a button to perform the search
-        search_button = tk.Button(window, text="Enter DNA marker/value",
-                                  command=lambda: self.edit_result_search(column_entry.get(),
-                                                                          value_entry.get(),
+        search_button = tk.Button(self, text="Enter DNA marker/value",
+                                  command=lambda: self.edit_result_search(column_entry.get(), value_entry.get(),
                                                                           user_input))
         search_button.pack()
 
