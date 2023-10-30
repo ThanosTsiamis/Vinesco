@@ -32,6 +32,7 @@ class CompareData(tk.Frame):
 
         # Text which explains the allowed difference
         self.allowed_difference_text = tk.Label(self, text="Allowed difference:")
+        self.allowed_difference_text.pack()
 
         # Numeric entry field for the allowed difference
         self.allowed_difference = tk.Entry(self, textvariable=tk.IntVar(), width=3)  # Adjust the width as needed
