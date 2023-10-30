@@ -43,6 +43,12 @@ class WelcomePage(tk.Frame):
             import shutil
             shutil.copy(source_file, database_file)
 
+        # Also copy the source file if the destination directory exists but the file is empty
+        elif os.path.exists(database_file):
+            if os.stat(database_file).st_size == 0:
+                import shutil
+                shutil.copy(source_file, database_file)
+
         subtext = tk.Label(self, text=" Unveiling Grape Varieties Through DNA Analysis", font=("Helvetica", 12),
                            fg="gray")
         subtext.place(x=50, y=50)
@@ -71,11 +77,13 @@ class WelcomePage(tk.Frame):
 
         insertEditGroundTruth = ttk.Button(self, text="Ιnsert/Edit Variety Numbers",
                                            command=lambda: controller.show_frame("InsertNewData"))
-        insertEditGroundTruth.pack()
 
         compareButton = ttk.Button(self, text="Compare against baseline data",
                                    command=lambda: controller.show_frame("CompareData"))
-        compareButton.pack()
+
+        # the insertEditGroundTruth and compareButton should be on the right side of the image
+        insertEditGroundTruth.place(x=700, y=90)
+        compareButton.place(x=700, y=150)
 
         # Create the footer frame with a grid layout and multiple rows
         footer_frame = tk.Frame(self)

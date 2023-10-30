@@ -9,16 +9,19 @@ import pandas as pd
 class InsertNewData(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Search for a grape variety")
-        label.pack(pady=10, padx=10)
+        search_frame = tk.Frame(self)
+        search_frame.pack(pady=10, padx=10)
+
+        label = tk.Label(search_frame, text="Search for a grape variety:")
+        label.grid(row=0, column=0, sticky='w')
 
         # Entry field for user input
-        self.variety_entry = tk.Entry(self)
-        self.variety_entry.pack()
+        self.variety_entry = tk.Entry(search_frame)
+        self.variety_entry.grid(row=0, column=1)
 
         # Button to perform the search
-        search_button = tk.Button(self, text="Search", command=self.search_variety)
-        search_button.pack()
+        search_button = tk.Button(search_frame, text="Search", command=self.search_variety)
+        search_button.grid(row=0, column=2)
 
         # Label to display the result
         self.result_label = tk.Label(self, text="")
@@ -27,6 +30,9 @@ class InsertNewData(tk.Frame):
         # Create a frame for the upload section
         upload_frame = tk.Frame(self)
         upload_frame.pack()
+
+        # Flag to keep track whether the edit button is visible or not
+        self.edit_button_visible = False
 
         # Label to explain what the "Upload File" button does
         upload_text = tk.Label(upload_frame, text="Upload a file to bulk add varieties to the database:")
@@ -38,6 +44,10 @@ class InsertNewData(tk.Frame):
 
         welcome_button = tk.Button(self, text="🏠 Go to Home Page", command=lambda: controller.show_frame("WelcomePage"))
         welcome_button.place(x=0, y=0)
+
+        # label that confirms that the value is updated
+        self.edit_successful = tk.Label(self, text="")
+        self.edit_successful.pack()
 
         # Get the directory where the script is running, considering pyinstaller
         self.script_directory = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -117,23 +127,25 @@ class InsertNewData(tk.Frame):
             if isinstance(widget, tk.Entry) and widget.winfo_parent() == self.winfo_id():
                 widget.destroy()
 
-        # Create a label to display the result
-        result_label = tk.Label(self, text=f"Variety: {user_input}")
-        result_label.pack()
+        if not self.edit_button_visible:
+            # Create a label to display the result
+            result_label = tk.Label(self, text=f"Variety: {user_input}")
+            result_label.pack()
+            # Create a text input to search for the column
+            column_entry = tk.Entry(self)
+            column_entry.pack()
 
-        # Create a text input to search for the column
-        column_entry = tk.Entry(self)
-        column_entry.pack()
+            # Create a text input to edit the value
+            value_entry = tk.Entry(self)
+            value_entry.pack()
 
-        # Create a text input to edit the value
-        value_entry = tk.Entry(self)
-        value_entry.pack()
+            # Create a button to perform the search
+            search_button = tk.Button(self, text="Enter DNA marker/value",
+                                      command=lambda: self.edit_result_search(column_entry.get(), value_entry.get(),
+                                                                              user_input))
+            search_button.pack()
 
-        # Create a button to perform the search
-        search_button = tk.Button(self, text="Enter DNA marker/value",
-                                  command=lambda: self.edit_result_search(column_entry.get(), value_entry.get(),
-                                                                          user_input))
-        search_button.pack()
+            self.edit_button_visible = True
 
     def edit_result_search(self, column, value, user_input):
         """Search for the column in the dataset. If the column is found, the user should be able to edit the value. If
@@ -148,14 +160,14 @@ class InsertNewData(tk.Frame):
                 # If the column exists, edit the value
                 df.loc[df['Variety'] == user_input, column] = value
                 df.to_csv(csv_file_path, index=False)
-                self.result_label.config(text="Value updated.")
+                self.edit_successful.config(text="Value updated.")
             else:
                 # If the column doesn't exist, create a new one
                 df[column] = value
                 df.to_csv(csv_file_path, index=False)
-                self.result_label.config(text="Column created.")
+                self.edit_successful.config(text="Column created.")
         except FileNotFoundError:
-            self.result_label.config(text=f"File not found.Make sure the database exists.")
+            self.edit_successful.config(text=f"File not found.Make sure the database exists.")
 
 
 if __name__ == "__main__":

@@ -32,7 +32,6 @@ class CompareData(tk.Frame):
 
         # Text which explains the allowed difference
         self.allowed_difference_text = tk.Label(self, text="Allowed difference:")
-        self.allowed_difference_text.pack()
 
         # Numeric entry field for the allowed difference
         self.allowed_difference = tk.Entry(self, textvariable=tk.IntVar(), width=3)  # Adjust the width as needed
@@ -41,6 +40,15 @@ class CompareData(tk.Frame):
         # Button to perform the Comparison
         search_button = tk.Button(self, text="Compare", command=self.verify_variety)
         search_button.pack()
+
+    def toggle_advanced_options(self):
+        # Toggle the visibility of advanced options
+        if self.allowed_difference_text.winfo_ismapped():
+            self.allowed_difference_text.grid_remove()
+            self.allowed_difference.grid_remove()
+        else:
+            self.allowed_difference_text.grid()
+            self.allowed_difference.grid()
 
     def load_external_file(self):
         file_path = filedialog.askopenfilename()
