@@ -8,6 +8,11 @@ import pandas as pd
 class CompareData(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+
+        # Button in the top left corner to go back to the home page
+        welcome_button = tk.Button(self, text="🏠 Go to Home Page", command=lambda: controller.show_frame("WelcomePage"))
+        welcome_button.place(x=0, y=0)
+
         # Table to display the results
         self.tree = None
 
@@ -137,15 +142,15 @@ class CompareData(tk.Frame):
                 # subtracting the difference
                 for key in difs:
                     self.df[key] = self.df[key] + difs[key]
-                print(self.df)
+                # print(self.df)
 
                 # Create a dictionary to store the close matches
                 close_match = {}
-                # If the user has entered a value for the allowed difference, use it. Otherwise, use 2
+                # If the user has entered a value for the allowed difference, use it. Otherwise, use 0
                 if self.allowed_difference.get():
                     allowed_difference = int(self.allowed_difference.get())
                 else:
-                    allowed_difference = 2
+                    allowed_difference = 0
                 for column in result:
                     # Don't fetch the column that is used for the search
                     if column != 'Sample':
@@ -165,7 +170,20 @@ class CompareData(tk.Frame):
                 # The dataframe should be displayed in a table. The indices should be hidden.
                 self.create_tree("Sample", "Scores")
             else:
-                self.message.config(text="Variety not found in the dataset. Make sure the spelling is correct.")
+                # First check if the user input exists in the ground truth file. If it does not, display an error that
+                # the variety is not found in the uploaded dataset nor in the ground truth file.
+                csv_file_path = os.path.join(os.path.join(os.path.expanduser("~"), "Vinesco"), "database",
+                                             "Varieties_Ground_Truth.csv")
+                try:
+                    varieties_ground_truth_df = pd.read_csv(csv_file_path)
+                    if user_input in varieties_ground_truth_df['Variety'].values:
+                        self.message.config(text="Variety not found in the uploaded dataset.")
+                    else:
+                        self.message.config(
+                            text="Variety not found in the uploaded dataset nor in the ground truth file."
+                                 " Make sure the spelling is correct or upload a new dataset.")
+                except FileNotFoundError or PermissionError:
+                    self.message.config(text="Database error. Make sure that the ground truth file exists.")
         else:
             self.message.config(text="No dataset loaded. Please upload a dataset first.")
 
